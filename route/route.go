@@ -6,14 +6,15 @@ import (
 	"go_shop/service/Cart"
 )
 
-func RouteInit() *fiber.App {
+func RouterInit() *fiber.App {
 	app := fiber.New()
 	ch := &controlle.CartHandler{
 		Cart: &Cart.Cart{},
 	}
 	cart := app.Group("/cart")
 	{
-		cart.Post("/add", ch.AddItem)
+		cart.Post("/addCart", ch.AddItem)
+		cart.Post("addPd", ch.AddProduct)
 	}
 	return app
 }
