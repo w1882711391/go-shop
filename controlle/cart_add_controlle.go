@@ -14,15 +14,15 @@ type CartHandler struct {
 // AddItem 加入购物车主流程
 func (ch *CartHandler) AddItem(c *fiber.Ctx) error {
 	var ctm model.CartItem
-	err := c.BodyParser(ctm)
-	if err != nil {
-		return util.Resp401(c, 401, "无效的参数请求")
+
+	if err := c.BodyParser(&ctm); err != nil {
+		return util.Resp401(c, "无效的参数请求")
 	}
-	if ctm.Number == 0 {
-		return util.Resp401(c, 401, "加入购物车的商品数量为零")
+	if ctm.Number <= 0 {
+		return util.Resp400(c, "加入购物车的商品数量必须大于0")
 	}
-	err = ch.Cart.AddItem(ctm)
-	if err != nil {
+
+	if err := ch.Cart.AddItem(ctm); err != nil {
 		return err
 	}
 	return util.Resp200(c, 200, "添加成功")
