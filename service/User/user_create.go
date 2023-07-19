@@ -26,11 +26,12 @@ func (n *NewUser) UserCreate(user model.User) (string, error) {
 			tx.Rollback()
 		}
 	}()
-
+	var newUser model.User
 	//	如果错误不为空的话 代表查到了
-	if err := dao.DB.Where("userid=?", user.UserId).Error; err != nil {
+	dao.DB.Where("user_id=?", user.UserId).First(&newUser)
+	if newUser.UserId == user.UserId {
 		tx.Rollback()
-		return "", fmt.Errorf("该userid已存在用户:%v", err)
+		return "", fmt.Errorf("该userid已存在用户")
 	}
 
 	//开始注册逻辑
