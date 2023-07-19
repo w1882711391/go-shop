@@ -25,14 +25,15 @@ func (ch *CartHandler) AddItem(c *fiber.Ctx) error {
 	}
 
 	if err := ch.Cart.AddItem(ctm); err != nil {
-		return err
+		return util.Resp400(c, fmt.Sprintf("添加商品出现错误: %v", err))
 	}
 	return util.Resp200(c, 200, "添加成功")
 }
 
+// AddProduct 添加商品信息
 func (ch *CartHandler) AddProduct(c *fiber.Ctx) error {
 	var pd model.Product
-
+	//绑定参数
 	if err := c.BodyParser(&pd); err != nil {
 		return util.Resp400(c, "无效的参数请求")
 	}

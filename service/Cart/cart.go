@@ -68,6 +68,7 @@ func IsCart(nickname string) bool {
 	return false
 }
 
+// AddProduct 添加商品核心逻辑
 func (c *Cart) AddProduct(pd *model.Product) error {
 	if err := dao.DB.Table("products").Where("nick_name=?", pd.NickName).Error; err == nil {
 		return fmt.Errorf("cart.go：73 数据库中存在该商品：%v", err)

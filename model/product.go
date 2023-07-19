@@ -14,5 +14,6 @@ type Product struct {
 // CartItem 购物车中商品信息
 type CartItem struct {
 	Product
-	Number int16 `json:"number"` //购物车中商品的数量
+	UserId string `json:"user_id"`
+	Number int16  `json:"number"` //购物车中商品的数量
 }
