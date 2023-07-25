@@ -20,11 +20,12 @@ func (ch *CartHandler) AddItem(c *fiber.Ctx) error {
 	if err := c.BodyParser(&ctm); err != nil {
 		return util.Resp401(c, "无效的参数请求")
 	}
+
 	if ctm.Number <= 0 {
 		return util.Resp400(c, "加入购物车的商品数量必须大于0")
 	}
 
-	if err := ch.Cart.AddItem(ctm); err != nil {
+	if err := ch.Cart.AddItem(c, ctm); err != nil {
 		return util.Resp400(c, fmt.Sprintf("添加商品出现错误: %v", err))
 	}
 	return util.Resp200(c, 200, "添加成功")

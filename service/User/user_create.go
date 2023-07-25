@@ -3,11 +3,11 @@ package User
 import (
 	"errors"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/sirupsen/logrus"
 	"go_shop/bcrypt"
 	"go_shop/dao"
 	"go_shop/model"
+	"go_shop/util"
 )
 
 type NewUser struct {
@@ -31,7 +31,7 @@ func (n *NewUser) UserCreate(user model.User) (string, error) {
 	dao.DB.Where("user_id=?", user.UserId).First(&newUser)
 	if newUser.UserId == user.UserId {
 		tx.Rollback()
-		return "", fmt.Errorf("该userid已存在用户")
+		return "", errors.New("该userid已存在用户")
 	}
 
 	//开始注册逻辑
@@ -49,13 +49,7 @@ func (n *NewUser) UserCreate(user model.User) (string, error) {
 	}
 
 	// 生成token
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["userId"] = user.UserId
-
-	// 签名token
-	signingKey := []byte("cui cui") // 替换为你自己的密钥
-	signedToken, err := token.SignedString(signingKey)
+	token, err := util.GenToken(user.UserId)
 	if err != nil {
 		tx.Rollback()
 		return "", fmt.Errorf("生成token失败:%v", err)
@@ -65,7 +59,7 @@ func (n *NewUser) UserCreate(user model.User) (string, error) {
 		tx.Rollback()
 		return "", fmt.Errorf("事务提交失败:%v", err)
 	}
-	return signedToken, nil
+	return token, nil
 }
 
 // UserMsgIsOk 判断用户信息是否符合要求

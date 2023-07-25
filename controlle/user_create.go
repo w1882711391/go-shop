@@ -22,8 +22,9 @@ func (u *UserHandler) Register(c *fiber.Ctx) error {
 	if err != nil {
 		return util.Resp400(c, fmt.Sprintf("注册存在错误: %v", err))
 	}
-	response := map[string]interface{}{
+
+	return util.Resp200(c, fiber.Map{
+		"msg":   "注册成功",
 		"token": token,
-	}
-	return util.Resp200(c, response)
+	})
 }

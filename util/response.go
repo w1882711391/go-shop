@@ -2,11 +2,10 @@ package util
 
 import (
 	"fmt"
-	"github.com/spf13/cast"
-	"strings"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gofiber/fiber/v2"
+	"github.com/spf13/cast"
+	"strings"
 )
 
 const (
