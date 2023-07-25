@@ -3,14 +3,15 @@ package controlle
 import (
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"go_shop/service/User"
 	"go_shop/util"
 )
 
-func (u *UserHandler) Login(ctx *fiber.Ctx) error {
+func Login(ctx *fiber.Ctx) error {
 	userid := ctx.FormValue("user_id")
 	password := ctx.FormValue("pass_word")
 
-	token, err := u.User.UserLogin(userid, password)
+	token, err := User.UserLogin(userid, password)
 
 	if err != nil {
 		return util.Resp500(ctx, fmt.Errorf("登录失败 : %v", err))

@@ -12,11 +12,11 @@ func JWTMiddleware() fiber.Handler {
 		if err != nil {
 			return Resp400(c, err.Error())
 		}
-		uid, err := GetPayload(token)
+		userid, err := GetPayload(token)
 		if err != nil {
 			return Resp400(c, err.Error())
 		}
-		c.Locals("user_id", uid)
+		c.Locals("user_id", userid)
 		return c.Next()
 	}
 }

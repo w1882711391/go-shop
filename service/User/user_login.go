@@ -11,9 +11,9 @@ import (
 )
 
 // UserLogin 登录逻辑函数
-func (n *NewUser) UserLogin(userID, password string) (string, error) {
+func UserLogin(userID, password string) (string, error) {
 	// 验证用户信息是否符合要求
-	if ok, err := n.LoginMsgIsOk(model.User{UserId: userID, PassWord: password}); !ok {
+	if ok, err := LoginMsgIsOk(model.User{UserId: userID, PassWord: password}); !ok {
 		return "", fmt.Errorf("用户信息不符合要求: %v", err)
 	}
 
@@ -40,7 +40,7 @@ func (n *NewUser) UserLogin(userID, password string) (string, error) {
 }
 
 // LoginMsgIsOk 判断用户信息是否符合要求
-func (n *NewUser) LoginMsgIsOk(user model.User) (bool, error) {
+func LoginMsgIsOk(user model.User) (bool, error) {
 	if len(user.UserId) < 6 || len(user.UserId) > 10 {
 		return false, errors.New("userid的长度应大于6小于10")
 	}

@@ -10,12 +10,8 @@ import (
 	"time"
 )
 
-// Cart 购物车
-type Cart struct {
-}
-
 // AddItem 向购物车中添加商品
-func (c *Cart) AddItem(ctx *fiber.Ctx, ctm model.CartItem) error {
+func AddItem(ctx *fiber.Ctx, ctm model.CartItem) error {
 
 	userID := ctx.Locals("user_id").(string)
 
@@ -72,7 +68,7 @@ func (c *Cart) AddItem(ctx *fiber.Ctx, ctm model.CartItem) error {
 		}
 	}
 
-	logrus.Info("添加商品成功")
+	logrus.Info("添加商品至购物车成功")
 	return nil
 }
 
@@ -83,30 +79,4 @@ func IsCart(nickname string) bool {
 		return true
 	}
 	return false
-}
-
-// AddProduct 添加商品核心逻辑
-func (c *Cart) AddProduct(pd *model.Product) error {
-	if err := dao.DB.Table("products").Where("nick_name=?", pd.NickName).Error; err == nil {
-		return fmt.Errorf("cart.go：73 数据库中存在该商品：%v", err)
-	}
-	//开启一个事务 防止操作不一致
-	tx := dao.DB.Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-
-	if err := dao.DB.Create(&pd).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("cart.go：84 商品添加失败：%v", err)
-	}
-	// 提交事务
-
-	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("事务提交错误: %v", err)
-	}
-	return nil
 }

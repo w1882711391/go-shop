@@ -8,14 +8,12 @@ import (
 	"go_shop/dao"
 	"go_shop/model"
 	"go_shop/util"
+	"regexp"
 )
 
-type NewUser struct {
-}
-
 // UserCreate 注册逻辑函数
-func (n *NewUser) UserCreate(user model.User) (string, error) {
-	if ok, err := n.UserMsgIsOk(user); !ok {
+func UserCreate(user model.User) (string, error) {
+	if ok, err := UserMsgIsOk(user); !ok {
 		return "", err
 	}
 
@@ -59,11 +57,12 @@ func (n *NewUser) UserCreate(user model.User) (string, error) {
 		tx.Rollback()
 		return "", fmt.Errorf("事务提交失败:%v", err)
 	}
+	logrus.Info("用户创建成功")
 	return token, nil
 }
 
 // UserMsgIsOk 判断用户信息是否符合要求
-func (n *NewUser) UserMsgIsOk(user model.User) (bool, error) {
+func UserMsgIsOk(user model.User) (bool, error) {
 	if len(user.UserId) < 6 || len(user.UserId) > 10 {
 		return false, errors.New("userid的长度应大于6小于10")
 	}
@@ -72,8 +71,11 @@ func (n *NewUser) UserMsgIsOk(user model.User) (bool, error) {
 		return false, errors.New("用户密码应在8和14位")
 	}
 
-	if len(user.PhoneNumber) != 11 {
-		return false, errors.New("您的手机号信息不符合规范")
+	pattern := `^1[3-9]\d{9}$`
+	regex := regexp.MustCompile(pattern)
+	//return regex.MatchString(phoneNumber)
+	if !regex.MatchString(user.PhoneNumber) {
+		return false, errors.New("您的手机号不符合规范")
 	}
 	return true, nil
 }
