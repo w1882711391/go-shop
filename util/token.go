@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"github.com/golang-jwt/jwt/v4"
 	"time"
 )
@@ -41,7 +40,6 @@ func GetPayload(token string) (string, error) {
 	parser := jwt.NewParser()
 	var claims Claims
 	_, _, err := parser.ParseUnverified(token, &claims)
-	fmt.Println("userid: ", claims.UserId)
 	return claims.UserId, err
 }
 

@@ -36,7 +36,7 @@ func AddProduct(pd *model.Product) error {
 }
 
 // UpdateProduct 修改商品内容
-func UpdateProduct(nickname string, pd *model.Product) error {
+func UpdateProduct(nickname string, pd model.Product) error {
 	var product model.Product
 	tx := dao.DB.Table("products").Begin()
 	defer func() {

@@ -13,12 +13,12 @@ import (
 // AddItem 向购物车中添加商品
 func AddItem(ctx *fiber.Ctx, ctm model.CartItem) error {
 
-	userID := ctx.Locals("user_id").(string)
-
-	strUserID := userID
-
+	userID, st := ctx.Locals("user_id").(string)
+	if !st {
+		return errors.New("类型断言失败")
+	}
 	// 类型断言成功，可以将 strUserID 作为字符串类型使用
-	ctm.UserId = strUserID
+	ctm.UserId = userID
 
 	//如果原来有这个商品的话
 	if IsCart(ctm.NickName) {
