@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-	if err := dao.MysqlInit(); err != nil {
-		panic("数据库启动失败")
-	}
-	logrus.Info("数据库已启动")
+	dao.MysqlInit()
+	logrus.Info("mysql数据库已启动")
+	dao.RedisInit()
+	logrus.Info("redis数据库已启动")
 	model.AutoMigrate()
 	logrus.Info("数据库表创建成功")
 	app := route.RouterInit()

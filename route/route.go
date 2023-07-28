@@ -10,7 +10,7 @@ import (
 func RouterInit() *fiber.App {
 	app := fiber.New()
 	app.Use(logger.New())
-	cart := app.Group("/cart", util.JWTMiddleware())
+	cart := app.Group("/cart", util.IsKick(), util.JWTMiddleware())
 	{
 		cart.Post("/addCart", controlle.AddItem)
 	}
@@ -23,8 +23,9 @@ func RouterInit() *fiber.App {
 	}
 	user := app.Group("/user")
 	{
+		user.Post("/kickUser", controlle.KickUser)
 		user.Post("/create", controlle.Register)
-		user.Post("/login", controlle.Login)
+		user.Post("/login", util.IsKick(), controlle.Login)
 	}
 	return app
 }
