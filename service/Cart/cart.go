@@ -80,3 +80,76 @@ func IsCart(nickname string) bool {
 	}
 	return false
 }
+
+// UpdateItem 商品数量修改
+func UpdateItem(nickname string, userid string, num int16) error {
+	var item model.CartItem
+	tx := dao.DB.Table("cart_items").Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := dao.DB.Where("user_id=? and nick_name=?", userid, nickname).First(&item).Error; err != nil {
+		return fmt.Errorf("cart.go 88 没有查询到该商品 err : %v", err)
+	}
+	item.Number = num
+
+	if err := dao.DB.Save(&item).Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("cart.go 93 数据库修改出现错误 err:%v", err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("事务提交错误 %v", err)
+	}
+	logrus.Info("购物车商品信息修改成功")
+
+	return nil
+}
+
+// DeleteItem 删除商品
+func DeleteItem(nickname string, userid string) error {
+	tx := dao.DB.Table("cart_items").Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	if err := dao.DB.Where("nike_name=? and user_id=?", nickname, userid).Delete(&model.CartItem{}).Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("删除失败: %v", err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return fmt.Errorf("事务提交错误 %v", err)
+	}
+	logrus.Info("删除成功")
+	return nil
+}
+
+// SearchItem 查询userid下购物车中所有商品的信息
+func SearchItem(userid string) ([]model.CartItem, error) {
+	tx := dao.DB.Table("cart_items").Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	var items []model.CartItem
+	if err := dao.DB.Where("user_id=?", userid).Find(&items).Error; err != nil {
+		tx.Rollback()
+		return items, fmt.Errorf("查询购物车失败: %v", err)
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return items, fmt.Errorf("事务提交错误 %v", err)
+	}
+	logrus.Info("查询成功")
+	return items, nil
+}

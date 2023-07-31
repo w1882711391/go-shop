@@ -10,10 +10,15 @@ import (
 func RouterInit() *fiber.App {
 	app := fiber.New()
 	app.Use(logger.New())
-	cart := app.Group("/cart", util.IsKick(), util.JWTMiddleware())
+	// 购物车handle
+	cart := app.Group("/cart", util.JWTMiddleware())
 	{
 		cart.Post("/addCart", controlle.AddItem)
+		cart.Post("/updateCart", controlle.UpdateItem)
+		cart.Post("/searchCart", controlle.SearchItem)
+		cart.Post("/deleteCart", controlle.DeleteItem)
 	}
+	// 商品的handle
 	pd := app.Group("/product", util.JWTMiddleware(), util.IsMerchant())
 	{
 		pd.Post("/addPd", controlle.AddProduct)
@@ -21,6 +26,7 @@ func RouterInit() *fiber.App {
 		pd.Post("/updatePd", controlle.UpdateProduct)
 		pd.Get("/searchPd", controlle.SearchProduct)
 	}
+	// 用户handle
 	user := app.Group("/user")
 	{
 		user.Post("/kickUser", controlle.KickUser)
