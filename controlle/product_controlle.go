@@ -27,10 +27,11 @@ func AddProduct(c *fiber.Ctx) error {
 // DeleteProduct 删除商品信息
 func DeleteProduct(c *fiber.Ctx) error {
 	nickname := c.FormValue("nike_name")
+	userid := c.FormValue("user_id")
 	if nickname == "" {
 		return util.Resp401(c, "nickname为空")
 	}
-	if err := Product.DeleteProduct(nickname); err != nil {
+	if err := Product.DeleteProduct(nickname, userid); err != nil {
 		return util.Resp400(c, fmt.Errorf("删除失败 err:%v", err))
 	}
 	return util.Resp200(c, "删除成功")
@@ -39,15 +40,18 @@ func DeleteProduct(c *fiber.Ctx) error {
 // UpdateProduct 修改商品信息
 func UpdateProduct(c *fiber.Ctx) error {
 	nickname := c.FormValue("nike_name")
+	userid := c.FormValue("user_id")
 	var pd model.Product
-	if err := c.BodyParser(&pd); err != nil {
-		return util.Resp401(c, fmt.Errorf("没有绑定要修改的内容 err:%v", err))
-	}
+
 	if nickname == "" {
 		return util.Resp401(c, "nickname为空")
 	}
 
-	if err := Product.UpdateProduct(nickname, pd); err != nil {
+	if err := c.BodyParser(&pd); err != nil {
+		return util.Resp401(c, fmt.Errorf("没有绑定要修改的内容 err:%v", err))
+	}
+
+	if err := Product.UpdateProduct(nickname, userid, pd); err != nil {
 		return util.Resp400(c, fmt.Errorf("执行逻辑函数出错：%v", err))
 	}
 	return util.Resp200(c, "修改成功")
@@ -56,11 +60,11 @@ func UpdateProduct(c *fiber.Ctx) error {
 // SearchProduct 查询商品信息
 func SearchProduct(c *fiber.Ctx) error {
 	nickname := c.FormValue("nike_name")
-
+	userid := c.FormValue("user_id")
 	if nickname == "" {
 		return util.Resp401(c, "nickname为空")
 	}
-	pd, err := Product.SearchProduct(nickname)
+	pd, err := Product.SearchProduct(nickname, userid)
 	if err != nil {
 		return fmt.Errorf("查询错误: %v", err)
 	}

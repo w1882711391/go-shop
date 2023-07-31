@@ -7,4 +7,5 @@ type User struct {
 	UserId      string `json:"user_id"`
 	PassWord    string `json:"pass_word"`
 	PhoneNumber string `json:"phone_number"`
+	IsMerchant  bool   `json:"is_merchant"`
 }

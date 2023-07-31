@@ -14,7 +14,7 @@ func RouterInit() *fiber.App {
 	{
 		cart.Post("/addCart", controlle.AddItem)
 	}
-	pd := app.Group("/product")
+	pd := app.Group("/product", util.JWTMiddleware(), util.IsMerchant())
 	{
 		pd.Post("/addPd", controlle.AddProduct)
 		pd.Post("/deletePd", controlle.DeleteProduct)

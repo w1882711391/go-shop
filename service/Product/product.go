@@ -10,7 +10,7 @@ import (
 
 // AddProduct 添加商品核心逻辑
 func AddProduct(pd *model.Product) error {
-	if err := dao.DB.Table("products").Where("nick_name=?", pd.NickName).Error; err == nil {
+	if err := dao.DB.Table("products").Where("nick_name=? and user_id=?", pd.NickName, pd.UserId).Error; err != nil {
 		return fmt.Errorf("cart.go：73 数据库中存在该商品：%v", err)
 	}
 	//开启一个事务 防止操作不一致
@@ -36,7 +36,7 @@ func AddProduct(pd *model.Product) error {
 }
 
 // UpdateProduct 修改商品内容
-func UpdateProduct(nickname string, pd model.Product) error {
+func UpdateProduct(nickname string, userid string, pd model.Product) error {
 	var product model.Product
 	tx := dao.DB.Table("products").Begin()
 	defer func() {
@@ -44,7 +44,7 @@ func UpdateProduct(nickname string, pd model.Product) error {
 			tx.Rollback()
 		}
 	}()
-	if err := dao.DB.Where("nike_name=?", nickname).First(&product).Error; err != nil {
+	if err := dao.DB.Where("nike_name=? and user_id=?", nickname, userid).First(&product).Error; err != nil {
 		return fmt.Errorf("查询不到此商品 : %v", err)
 	}
 	product.NickName = pd.NickName
@@ -66,7 +66,7 @@ func UpdateProduct(nickname string, pd model.Product) error {
 }
 
 // SearchProduct 查询商品
-func SearchProduct(nickname string) (model.Product, error) {
+func SearchProduct(nickname string, userid string) (model.Product, error) {
 	var product model.Product
 	tx := dao.DB.Table("products").Begin()
 	defer func() {
@@ -74,7 +74,7 @@ func SearchProduct(nickname string) (model.Product, error) {
 			tx.Rollback()
 		}
 	}()
-	if err := dao.DB.Where("nike_name=?", nickname).First(&product).Error; err != nil {
+	if err := dao.DB.Where("nike_name=? and user_id", nickname, userid).First(&product).Error; err != nil {
 		return product, fmt.Errorf("查询不到此商品 : %v", err)
 	}
 
@@ -88,7 +88,7 @@ func SearchProduct(nickname string) (model.Product, error) {
 }
 
 // DeleteProduct 删除商品 逻辑删除
-func DeleteProduct(nickname string) error {
+func DeleteProduct(nickname, userid string) error {
 	var product model.Product
 	tx := dao.DB.Table("products").Begin()
 	defer func() {
@@ -96,7 +96,7 @@ func DeleteProduct(nickname string) error {
 			tx.Rollback()
 		}
 	}()
-	if err := dao.DB.Where("nike_name=?", nickname).First(&product).Error; err != nil {
+	if err := dao.DB.Where("nike_name=? and user_id=?", nickname, userid).First(&product).Error; err != nil {
 		return fmt.Errorf("查询不到此商品 : %v", err)
 	}
 	if err := dao.DB.Delete(&product); err != nil {
