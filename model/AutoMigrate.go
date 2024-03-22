@@ -16,5 +16,11 @@ func AutoMigrate() {
 	if err := dao.DB.AutoMigrate(&User{}); err != nil {
 		logrus.Error("用户表自动迁移失败")
 	}
+	if err := dao.DB.AutoMigrate(&WantProduct{}); err != nil {
+		logrus.Error("求购表自动迁移失败")
+	}
+	if err := dao.DB.AutoMigrate(&Order{}); err != nil {
+		logrus.Error("订单表自动迁移失败")
+	}
 	return
 }

@@ -21,7 +21,7 @@ func AddProduct(pd *model.Product) error {
 		}
 	}()
 
-	if err := dao.DB.Create(&pd).Error; err != nil {
+	if err := tx.Create(&pd).Error; err != nil {
 		tx.Rollback()
 		return fmt.Errorf("cart.go：84 商品添加失败：%v", err)
 	}
@@ -35,7 +35,7 @@ func AddProduct(pd *model.Product) error {
 	return nil
 }
 
-// UpdateProduct 修改商品内容
+// UpdateProduct 修改商品信息
 func UpdateProduct(nickname string, userid string, pd model.Product) error {
 	tx := dao.DB.Table("products").Begin()
 	defer func() {
@@ -45,16 +45,16 @@ func UpdateProduct(nickname string, userid string, pd model.Product) error {
 	}()
 
 	var product model.Product
-	if err := dao.DB.Where("nike_name=? and user_id=?", nickname, userid).First(&product).Error; err != nil {
+	if err := tx.Where("nick_name=? and user_id=?", nickname, userid).First(&product).Error; err != nil {
 		return fmt.Errorf("查询不到此商品 : %v", err)
 	}
 	product.NickName = pd.NickName
-	product.Stock = pd.Stock
-	product.Price = pd.Price
-	product.Description = pd.Description
+	product.OriginalPrice = pd.OriginalPrice
+	product.Content = pd.Content
+	product.SalePrice = pd.SalePrice
 	product.UpdatedAt = time.Now()
 
-	if err := dao.DB.Save(&product).Error; err != nil {
+	if err := tx.Save(&product).Error; err != nil {
 		tx.Rollback()
 		return fmt.Errorf("保存商品更改到数据库时出现错误: %v", err)
 	}

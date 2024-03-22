@@ -41,8 +41,8 @@ func UserLogin(userID, password string) (string, error) {
 
 // LoginMsgIsOk 判断用户信息是否符合要求
 func LoginMsgIsOk(user model.User) (bool, error) {
-	if len(user.UserId) < 6 || len(user.UserId) > 10 {
-		return false, errors.New("userid的长度应大于6小于10")
+	if len(user.UserId) != 10 {
+		return false, errors.New("userid的长度不符")
 	}
 
 	if len(user.PassWord) < 8 || len(user.PassWord) > 14 {

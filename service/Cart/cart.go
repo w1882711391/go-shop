@@ -22,44 +22,7 @@ func AddItem(ctx *fiber.Ctx, ctm model.CartItem) error {
 
 	//如果原来有这个商品的话
 	if IsCart(ctm.NickName) {
-		var cart model.CartItem
-		err := dao.DB.Table("cart_items").Where("user_id=? AND nick_name=?", userID, ctm.NickName).First(&cart).Error
-		if err != nil {
-			return fmt.Errorf("数据库查询错误: %v", err)
-		}
-		totalNumber := cart.Number + ctm.Number
-		// 查询商品库存
-		var p model.Product
-		err = dao.DB.Table("products").Where("nick_name=?", ctm.NickName).First(&p).Error
-		if err != nil {
-			return fmt.Errorf("数据库查询错误: %v", err)
-		}
-
-		if totalNumber >= p.Stock {
-			return errors.New("超出最大可添加数量")
-		}
-
-		//开启一个事务 防止操作不一致
-		tx := dao.DB.Begin()
-		defer func() {
-			if r := recover(); r != nil {
-				tx.Rollback()
-			}
-		}()
-		cart.Number = totalNumber
-		ctm.UpdatedAt = time.Now()
-
-		err = dao.DB.Save(&cart).Error
-		if err != nil {
-			tx.Rollback()
-			return fmt.Errorf("数据库保存错误: %v", err)
-		}
-		// 提交事务
-		err = tx.Commit().Error
-		if err != nil {
-			tx.Rollback()
-			return fmt.Errorf("事务提交错误: %v", err)
-		}
+		return fmt.Errorf("已添加过购物车")
 	} else {
 		ctm.UpdatedAt = time.Now()
 		err := dao.DB.Table("cart_items").Create(&ctm).Error
@@ -81,33 +44,33 @@ func IsCart(nickname string) bool {
 	return false
 }
 
-// UpdateItem 商品数量修改
-func UpdateItem(nickname string, userid string, num int16) error {
-	var item model.CartItem
-	tx := dao.DB.Table("cart_items").Begin()
-	defer func() {
-		if r := recover(); r != nil {
-			tx.Rollback()
-		}
-	}()
-	if err := dao.DB.Where("user_id=? and nick_name=?", userid, nickname).First(&item).Error; err != nil {
-		return fmt.Errorf("cart.go 88 没有查询到该商品 err : %v", err)
-	}
-	item.Number = num
-
-	if err := dao.DB.Save(&item).Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("cart.go 93 数据库修改出现错误 err:%v", err)
-	}
-
-	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
-		return fmt.Errorf("事务提交错误 %v", err)
-	}
-	logrus.Info("购物车商品信息修改成功")
-
-	return nil
-}
+// UpdateItem 商品状态修改
+//func UpdateItem(nickname string, userid string, num int16) error {
+//	var item model.CartItem
+//	tx := dao.DB.Table("cart_items").Begin()
+//	defer func() {
+//		if r := recover(); r != nil {
+//			tx.Rollback()
+//		}
+//	}()
+//	if err := dao.DB.Where("user_id=? and nick_name=?", userid, nickname).First(&item).Error; err != nil {
+//		return fmt.Errorf("cart.go 88 没有查询到该商品 err : %v", err)
+//	}
+//	item. = num
+//
+//	if err := dao.DB.Save(&item).Error; err != nil {
+//		tx.Rollback()
+//		return fmt.Errorf("cart.go 93 数据库修改出现错误 err:%v", err)
+//	}
+//
+//	if err := tx.Commit().Error; err != nil {
+//		tx.Rollback()
+//		return fmt.Errorf("事务提交错误 %v", err)
+//	}
+//	logrus.Info("购物车商品信息修改成功")
+//
+//	return nil
+//}
 
 // DeleteItem 删除商品
 func DeleteItem(nickname string, userid string) error {

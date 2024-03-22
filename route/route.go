@@ -14,7 +14,7 @@ func RouterInit() *fiber.App {
 	cart := app.Group("/cart", util.JWTMiddleware())
 	{
 		cart.Post("/addCart", controlle.AddItem)
-		cart.Post("/updateCart", controlle.UpdateItem)
+		//cart.Post("/updateCart", controlle.UpdateItem)
 		cart.Post("/searchCart", controlle.SearchItem)
 		cart.Post("/deleteCart", controlle.DeleteItem)
 	}
@@ -30,7 +30,6 @@ func RouterInit() *fiber.App {
 	user := app.Group("/user")
 	{
 		user.Post("/kickUser", controlle.KickUser)
-		user.Post("/create", controlle.Register)
 		user.Post("/login", util.IsKick(), controlle.Login)
 	}
 	return app
