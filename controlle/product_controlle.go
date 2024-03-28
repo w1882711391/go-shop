@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-const path = "../img/"
+const path = "./img/"
 
 // AddProduct 添加商品信息
 func AddProduct(c *fiber.Ctx) error {
