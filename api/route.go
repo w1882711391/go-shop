@@ -3,7 +3,7 @@ package api
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
-	"go_shop/service/internal/controlle"
+	"go_shop/controlle"
 
 	"go_shop/util"
 )

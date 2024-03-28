@@ -13,7 +13,7 @@ ENV GOPROXY="https://goproxy.io"
 # 构建 Go 语言程序
 RUN go build -o main .
 
-EXPOSE 8080
+EXPOSE 8433
 
 # 定义容器启动时执行的命令
 CMD ["./shop"]

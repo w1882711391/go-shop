@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"github.com/sirupsen/logrus"
+	"go_shop/api"
 	"go_shop/dao"
 	"go_shop/model"
-	"go_shop/service/internal/api"
+
 	"os/signal"
 	"syscall"
 )
