@@ -13,7 +13,7 @@ import (
 func IsKick() fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		var user model.User
-		user.UserId = c.FormValue("user_id")
+		user.UserId = c.FormValue("sid")
 		if user.UserId == "" {
 			if err := c.BodyParser(&user); err != nil {
 				return Resp401(c, fmt.Sprintf("参数存在问题 : %v", err))
@@ -36,7 +36,7 @@ func IsKick() fiber.Handler {
 // KickUser 踢出用户
 func KickUser(userid string, t int64) error {
 	var user model.User
-	if err := dao.DB.Table("users").Where("user_id=?", userid).First(&user).Error; err != nil {
+	if err := dao.DB.Table("users").Where("sid=?", userid).First(&user).Error; err != nil {
 		return errors.New("没有该用户")
 	}
 	err := dao.Client.Set("blacklist:"+userid, "true", time.Duration(t)*time.Minute).Err()

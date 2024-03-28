@@ -5,7 +5,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"go_shop/dao"
 	"go_shop/model"
-	"go_shop/route"
+	"go_shop/service/internal/api"
 	"os/signal"
 	"syscall"
 )
@@ -25,8 +25,8 @@ func main() {
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 	go func() {
-		app := route.RouterInit()
-		listenHttpErrChan <- app.Listen(":8080")
+		app := api.RouterInit()
+		listenHttpErrChan <- app.Listen(":8433")
 	}()
 
 	select {

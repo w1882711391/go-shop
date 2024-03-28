@@ -7,9 +7,9 @@ import (
 
 // Claims 自定义声明结构体并内嵌jwt.StandardClaims
 // jwt包自带的jwt.StandardClaims只包含了官方字段
-// 这里额外记录user_id，所以要自定义结构体
+// 这里额外记录sid，所以要自定义结构体
 type Claims struct {
-	UserId string `json:"user_id"`
+	UserId string `json:"sid"`
 	jwt.RegisteredClaims
 }
 
@@ -22,9 +22,9 @@ func GenToken(userid string) (string, error) {
 		UserId: userid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "cuicui",
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Minute)), // 过期时间
-			IssuedAt:  jwt.NewNumericDate(time.Now()),                       // 签发时间
-			NotBefore: jwt.NewNumericDate(time.Now()),                       // 生效时间
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(3000 * time.Minute)), // 过期时间
+			IssuedAt:  jwt.NewNumericDate(time.Now()),                         // 签发时间
+			NotBefore: jwt.NewNumericDate(time.Now()),                         // 生效时间
 		}}
 	// 使用指定的签名方法创建签名对象
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)

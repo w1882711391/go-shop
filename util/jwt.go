@@ -16,7 +16,7 @@ func JWTMiddleware() fiber.Handler {
 		if err != nil {
 			return Resp400(c, err.Error())
 		}
-		c.Locals("user_id", userid)
+		c.Locals("sid", userid)
 		return c.Next()
 	}
 }

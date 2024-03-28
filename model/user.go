@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	UserId      string `json:"user_id"`      //用户id
-	PassWord    string `json:"pass_word"`    // 密码
+	UserId      string `json:"sid" form:"sid" gorm:"column:sid;"`                //用户id
+	PassWord    string `json:"password" form:"password" gorm:"column:password;"` // 密码
+	UserName    string `json:"user_name" form:"user_name" gorm:"column:user_name"`
 	Gender      string `json:"gender"`       //性别
 	PhoneNumber string `json:"phone_number"` // 电话
 	Email       string `json:"email"`        //邮箱
